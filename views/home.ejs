@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Home</title>
+        <meta charset="utf-8" />
+        <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+        <link href="/static/css/style.css" rel="stylesheet">
+        <script src="/static/js/jquery-3.2.1.min.js"></script>
+        <script src="/static/js/bootstrap.min.js"></script>
+    </head>
+    <body>
+        <div class="container">
+            <div id="tete" class="row">
+                <div class="col-md-3 logo">
+                    <img src="/static/logo.jpg" alt="Logo" height="75">
+                </div>
+                <div class="col-md-3 elem_menu_tete">
+                    <a href="/recette">Recettes</a>
+                </div>
+                <div class="col-md-3 elem_menu_tete">
+                    <a href="/home">Home <%= login %></a>
+                </div>
+                <div class="col-md-3 deconnexion">
+                    <% if(connexion > 0){ %>
+                    <form action="/deconnexion" method="post">
+                        <input type="submit" value="se déconnecter">
+                    </form>
+                    <% }else{ %>                                                
+                    <a href="/home"><button>Se connecter</button></a>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+        <div class="ligne">
+        </div>
+        <% if(connexion == 0){ %>
+        <div class="container">
+            <div id="corps_connect" class="row corps">
+                <div class="col-md-5 bloc">
+                    <h2>Se connecter</h2>
+                    <form action="/connexion" method="post"> 
+                        <input name="form" value="connexion" style="display: none">
+                        login:
+                        <input type="text" name="login" value=""></br>
+                        mot de passe:
+                        <input type="password" name="mdp" value=""></br>
+                        <input type="submit" value="connexion">
+                        <% if(erreur.connexion=="login") { %>
+                        <p style="color: red"> login inconnue</br>
+                        <% } %>
+                        <% if(erreur.connexion=="mdp") { %>
+                        <p style ="color: red"> mot de passe invalide</p<>
+                        <% } %>
+                    </form>
+                </div>
+                <div class="col-md-2">
+                </div>
+                <div class="col-md-5 bloc">
+                    <h2>S'inscrire</h2>
+                    <form action="/inscription" class="inscription" method="post"> 
+                        login:
+                        <input type="text" name="login" value=""></br>
+                        prenom:
+                        <input type="text" name="prenom" value=""></br>
+                        nom:
+                        <input type="text" name="nom" value=""></br>
+                        email:
+                        <input type="text" name="email" value=""></br>
+                        mot de pass:
+                        <input type="password" name="mdp" value=""></br>
+                        adresse:
+                        <input type="text" name="adresse" value=""></br>
+                        <input type="submit" value="inscription">
+                        <% if(erreur.inscr=="mdp") { %>
+                        <p style="color: red"> mot de passe invalide</br>
+                        il doit faire au minimum 8 caracteres</p>
+                        <% } %>
+                        <% if(erreur.inscr=="login") { %>
+                        <p style="color: red"> login ou email déja utilisé</p<>
+                        <% } %>
+                        <% if(erreur.inscr=="email") { %>
+                        <p style="color: red"> l'email doit être au format _@_._</p<>
+                        <% } %>
+                        <% if(erreur.inscr=="impossible") { %>
+                        <p style="color: red"> inscription impossible</p<>
+                        <% } %>
+                        <% if(erreur.inscr=="réussi") { %>
+                        <p> inscription réussi</p<>
+                        <% } %>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <% } %>
+        <% if(connexion == 2) { %>
+        <div class="container l-utilisateur">
+            <div class="row corps">
+                <div class="col-md-4 bloc">
+                    <h2>Utilisateurs</h2>
+                    <div class="corps_users">
+                        <% utilisateurs.forEach(function(utilisateur){ %>
+                        <li class="nom-utilisateur" style="display: inline">
+                            <%= utilisateur.login %>
+                            <form action="/suppression_u" method="post" style="display: inline">
+                                <input name="id" value="<%= utilisateur.id %>" style="display: none">
+                                <input type="submit" value="supprimer">
+                            </form>
+                        </li></br>
+                        <% });  %>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                </div>
+                <div class="col-md-6 bloc">
+                    <h2>Ajouter utilisateur</h2>
+                    <form action="/ajout_u" method="post" class="inscription"> 
+                        groupe:
+                        <select name="groupe">
+                            <option value="1">standard</option>
+                            <option value="2">administrateur</option>
+                        </select></br>
+                        login:
+                        <input type="text" name="login" value=""></br>
+                        prenom:
+                        <input type="text" name="prenom" value=""></br>
+                        nom:
+                        <input type="text" name="nom" value=""></br>
+                        email:
+                        <input type="text" name="email" value=""></br>
+                        mot de passe:
+                        <input type="password" name="mdp" value=""></br>
+                        adresse:
+                        <input type="text" name="adresse" value=""></br>
+                        <input type="submit" value="ajouter">
+                        <% if(erreur.ajout=="mdp") { %>
+                        <p style="color: red"> mot de passe invalide</br>
+                        il doit faire au minimum 8 caracteres</p>
+                        <% } %>
+                        <% if(erreur.ajout=="login") { %>
+                        <p style="color: red"> login ou email déja utilisé</p<>
+                        <% } %>
+                        <% if(erreur.ajout=="email") { %>
+                        <p style="color: red"> l'email doit être au format _@_._</p<>
+                        <% } %>
+                        <% if(erreur.ajout=="impossible") { %>
+                        <p style="color: red"> inscription impossible</p<>
+                        <% } %>
+                        <% if(erreur.ajout=="réussi") { %>
+                        <p> inscription réussi</p<>
+                        <% } %>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <% } %>
+        <% if(connexion > 0){ %>
+        <div class="container">
+            <div id="corps_recettes" class="row corps">
+                <div class="col-md-3 bloc">
+                    <article class="list-recipe">
+                        <h2>Mes Recettes</h2>
+                        <ul>
+                            <% recettes.forEach(function(recette){ %>
+                            <a href="/recette/<%= recette.id %>"><li class="p-recipe"><%= recette.nom %></li></a>
+                            <% });  %>
+                        </ul>
+                    </article>
+                </div>
+                <div class="col-md-1">
+                </div>
+                <div class="col-md-8 bloc">
+                    <h2>Nouvelle Recette</h2>
+                    <form class="creer_recette" action="/creer_recette" method="post"> 
+                        nom de la recette:
+                        <input type="text" name="nom" value="nom de la recette"></br>
+                        description:
+                        <textarea rows="5" cols="25" name="descr">description</textarea></br>
+                        difficulté:
+                        <select name="diff">
+                            <option value="TRES FACILE">très facile</option>
+                            <option value="FACILE">facile</option>
+                            <option value="MOYEN">moyen</option>
+                            <option value="DIFFICILE">difficile</option>
+                        </select> </br>
+                        prix:
+                        <select name="prix">
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select> </br>
+                        nombre de personnes:
+                        <input type="text" name="nb_pers" value="2"></br>
+                        energie (en kcalories):
+                        <input type="text" name="nrj" value="2"></br>
+                        temps de préparation (en minutes):
+                        <input type="text" name="tmp" value="30"></br>
+                        <input type="submit" value="creer">
+                    </form>
+                </div>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div id="corps_planning" class="row corps">
+                <div class="col-md-5 bloc">
+                    <h2>Planning</h2>
+                    <ul>
+                        <% plannings.forEach(function(planning){ %>
+                        <li>
+                            Recette: <%= planning.recette %>, pour <%= planning.nb_pers %> personnes</br>Date: <%= planning.date %>
+                            <form action="/suppression_p" method="post" style="display: inline">
+                                <input name="id" value="<%= planning.id %>" style="display: none">
+                                <input type="submit" value="supprimer">
+                            </form>
+
+                        </li></br></br>
+                        <% });  %>
+                    </ul>
+                </div>
+                <div class="col-md-2">
+                </div>
+                <% if(connexion == 2) { %>
+                <div class="col-md-5 bloc">
+                    <h2>Ingrédients</h2>
+                    <% if(ingredients!=null) { %>
+                    <form action="/suppression_i" method="post" style="display: inline">
+                        <select name="ingr_id">
+                            <% ingredients.forEach(function(ingredient){ %>
+                            <option value="<%= ingredient.id %>"><%= ingredient.nom %></option>
+                            <% });  %>
+                        </select>
+                        <input type="submit" value="supprimer">
+                    </form>
+                    <% } %>
+                </div>
+                <% } %>
+            </div>
+        </div>
+        <% } %>
+    </body>
+</html>

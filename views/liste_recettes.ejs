@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Recettes</title>
+        <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+        <link href="/static/css/style.css" rel="stylesheet">
+        <script src="/static/js/jquery-3.2.1.min.js"></script>
+        <script src="/static/js/bootstrap.min.js"></script>
+        <script src="/static/js/script.js"></script>
+    </head>
+    <body>
+        <div class="container">
+            <div id="tete" class="row">
+                <div class="col-md-3 logo">
+                    <img src="/static/logo.jpg" alt="Logo" height="75">
+                </div>
+                <div class="col-md-3 elem_menu_tete">
+                    <a href="/recette">Recettes</a>
+                </div>
+                <div class="col-md-3 elem_menu_tete">
+                    <a href="/home">Home <%= login %></a>
+                </div>
+                <div class="col-md-3 deconnexion">
+                    <% if(connexion > 0){ %>
+                    <form action="/deconnexion" method="post">
+                        <input type="submit" value="se déconnecter">
+                    </form>
+                    <% }else{ %>
+                    <a href="/home"><button>Se connecter</button></a>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+        <div class="ligne">
+        </div>
+        <div class="container">
+            <div class="row corps">
+                <div class="col-md-3">
+                </div>
+                <div class="col-md-6 bloc">
+                    <form action="/recette" method="post" style="display: inline">
+                        Chercher par ingredient:
+                        <input name="ingr" value="ingredient">
+                        <input type="submit" value="chercher">
+                    </form>
+                    <article class="list-recipe">
+                        <h1 class="p-name">Recettes</h1>
+                        <% recettes.forEach(function(recette){ %>
+                        <a href="/recette/<%= recette.id %>"><li class="p-ingredient"><%= recette.nom %></li></a>
+                        <% });  %>
+                    </article>
+                </div>
+                <div class="col-md-3">
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

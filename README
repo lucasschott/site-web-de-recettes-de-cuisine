@@ -1,0 +1,104 @@
+//////////généralités//////////
+
+
+Ce projet est un site web de recettes de cuisines, il se presente sous la forme d'une page home 
+qui contient champs de connexion et d'inscription. Une page recettes, qui contient la liste des
+recettes disponibles, avec des options de tri. Et une page pour chaque recette contenat toutes
+les informations de la recettes, y compris les ingredients et les étapes.
+
+Une fois connecté avec un compte simple utilisateur, la page home contient les informations du
+compte, les recettes appartenant au compte ainsi que le planning prévisionnel des recettes à
+effectuer.
+Les apages des recettes appartenant au compte courant contienent des champs pour modifier la
+recette et ajouter des ingredients. Seule les recettes appartenant au compte peuvent etre modifés.
+
+Si l'on est connecté avec un compte administrateur la page home contient les informations du compte
+comme pour l'utilisateur standard, et contient en plus la liste des utilisateurs inscrits sur le
+site, et la liste des ingredients du site. l'administrateur peut supprimer des utilisateurs et des
+ingredients. Un utilisateur administrateur peut aussi modifier toute les recettes, même celles qui
+ne lui appartiennent pas.
+
+Attention ! à cause des contraintes d'integrité du modèle, un utilisateur ne peut être supprimer
+qu'après avoir supprimé toutes ses recettes, ingredients et planning, ceci est un point qui pourrait
+être amélioré.
+
+
+
+Le projet site web de recettes de cuisine à été réalisé avec Node.js pour le
+controleur (server), ejs pour generer les vues,
+javascript pour les animations coté client, et Mariadb (ou mysql) pour le
+modèle.
+
+
+//////////problèmes et bugs non résolus//////////
+
+
+Lors de la connexion d'un administrateur, dans la liste des utilisateurs que
+l'on peut supprimer se trouve aussi son propre compte. Mais en réalité celui
+ci n'est pas supprimable. Il suffit de rafraichire la page pour que l'affichage
+soit correcte, et que son propre compte ne s'affiche plus dans cette liste.
+
+
+//////////nodejs//////////
+
+
+
+Pour lancer ce site il faut avoir installé Node.js avec la commande suivante
+par exemple:
+    sudo apt-get install nodejs
+
+
+Une fois fait, il faut installer les différents modules Node.js suivants:
+    express
+    cookie-parser
+    express-session
+    mysql
+    body-parser
+    crypto-js
+    crypto
+    ejs
+    pm2
+
+
+Pour installer ces modules il faut utiliser npm (normalement installé en meme
+temps que Node.js) et taper les commandes suivantes:
+    npm install -g npm
+    npm install express cookie-parser express-session mysql body-parser crypto-js crypto ejs pm2
+
+(si npm indique des problèmes de version non disponible, il faut regarder dans
+le fichier package.json et commenter ou supprimer la ligne correspondant au
+module qui pose problèmes)
+
+
+//////////mysql//////////
+
+
+
+Les scriptes de création, de remplissage et de destruction des tables de la
+base de donnée sont fournis, ils sont compatible mysql.
+
+Il faudra juste entrer les identifiants et mot de passe de la base de données
+dans la fonction mysql.createConnection() au début du fichier server.js
+
+La base de données est initialisée avec deux utilisateurs:
+login: ADMIN1  mot de passe:00000000 qui est administrateur
+login: USER1   mot de passe:12345678 qui est simple utilisateur
+
+
+//////////utilisation//////////
+
+
+
+le server lit sur le port 8888
+l'url pour visualiser le site par défaut est donc: localhost:8888/
+
+
+Le server se lance avec la commande:
+    pm2 start server
+cette commande lance le server en arrière plan, si le server plante, pm2 le
+relance immédiatement.
+
+il faut utiliser la commande suivante pour arrêter le server:
+    pm2 stop server
+
+auteur: Lucas Schott

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title><%= nom_recette %></title>
+        <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+        <link href="/static/css/style.css" rel="stylesheet">
+        <script src="/static/js/jquery-3.2.1.min.js"></script>
+        <script src="/static/js/bootstrap.min.js"></script>
+        <script src="/static/js/script.js"></script>
+    </head>
+    <body>
+        <div class="container">
+            <div id="tete" class="row">
+                <div class="col-md-3 logo">
+                    <img src="/static/logo.jpg" alt="Logo" height="75">
+                </div>
+                <div class="col-md-3 elem_menu_tete">
+                    <a href="/recette">Recettes</a>
+                </div>
+                <div class="col-md-3 elem_menu_tete">
+                    <a href="/home">Home <%= login %></a>
+                </div>
+                <div class="col-md-3 deconnexion">
+                    <% if(connexion > 0){ %>
+                    <form action="/deconnexion" method="post">
+                        <input type="submit" value="se déconnecter">
+                    </form>
+                    <% }else{ %>                                                
+                    <a href="/home"><button>Se connecter</button></a>
+                    <% } %>
+
+                </div>
+            </div>
+        </div>
+        <div class="ligne">
+        </div>
+        <div class="container">
+            <div id="corps_recettes" class="row corps">
+                <div class="col-md-1">
+                </div>
+                <div class="col-md-10 bloc">
+                    <article class="h-recipe">
+                        <div style="display: inline">
+                            <h1 class="p-name"><%= nom_recette %></h1>
+                            <% if(proprietaire==true || connexion==2){ %>
+                            <form action="/supprimer_recette" method="post" style="display: inline">
+                                <input name="id" value="<%= id_recette %>" style="display: none">
+                                <input type="submit" value="supprimer">
+                            </form></br>
+                            <% } %>
+                            <% if(connexion>0){ %>
+                            <form action="/ajouter_planning" method="post" style="display: inline">
+                                <input name="recette" value="<%= id_recette %>" style="display: none">
+                                <input type="submit" value="ajouter au planning">
+                                pour <input type="text" name="nb_pers" value="2"> persones,
+                                dans <input type="text" name="date" value=""> jours.
+                            </form>
+                            <% } %>
+                        </div>
+                        <p>créateur: <%= createur %></p>
+                        <p>ingrédients:</p>
+                        <ul>
+                            <% ingredients_recette.forEach(function(ingredient){ %>
+                            <li class="p-ingredient" style="display: inline">
+                                <%= ingredient.nom %>: <%= ingredient.quantite %> grammes ou unités
+                                <% if(proprietaire==true || connexion==2){ %>
+                                <form action="/supprimer_compo/<%= id_recette %>" method="post" style="display: inline">
+                                    <input name="id" value="<%= ingredient.compo_id %>" style="display: none">
+                                    <input type="submit" value="supprimer">
+                                </form>
+                                <% } %>
+                            </li></br>
+                            <% });  %>
+                        </ul>
+                        <p>Temps de préparation: <time class="dt-duration" datetime="1H"><%= duration %> minutes</time>,
+                        pour <data class="p-yield" value="4"><%= nb_personnes %> personnes</data>.</p>
+                        <div class="e-instructions">
+                            <ol>
+                                <% for (var i=0; i< etapes.length;i++){ %>
+                                <li>
+                                    <%= etapes[i].descr %>. Durée: <%= etapes[i].duree %> minutes
+                                    <% if(proprietaire==true || connexion==2){ %>
+                                    <form action="/supprimer_etape/<%= id_recette %>" method="post" style="display: inline">
+                                        <input name="id" value="<%= etapes[i].id %>" style="display: none">
+                                        <input type="submit" value="supprimer">
+                                    </form>
+                                    <% } %>
+                                </li>
+                                <% }; %>
+                            </ol>
+                        </div>
+                    </article>
+                </div>
+                <div class="col-md-1">
+                </div>
+            </div>
+        </div>
+        <% if(proprietaire==true || connexion==2){ %>
+        <div class="container">
+            <div id="modif_recette" class="row corps">
+                <div class="col-md-1">
+                </div>
+                <div class="col-md-4 bloc">
+                    <h3>Ajouter une étape</h3>
+                    <form class ="ajout_etape" action="/ajouter_etape/<%= id_recette %>" method="post">
+                        <input name="recette" value="<%= id_recette %>" style="display: none"></br>
+                        Description:
+                        <textarea rows="5" cols="25" name="descr">description</textarea></br>
+                        Durée:
+                        <input type="text" name="duree" value="10"></br>
+                        <input type="submit" value="ajouter"></br>
+                    </form>
+                </div>
+                <div class="col-md-2">
+                </div>
+                <div class="col-md-4 bloc">
+                    <h3>Ajouter un ingredient</h3>
+                    <% if(ingredients_total.length != 0) { %>
+                    <form class ="ajout_compo" action="/ajouter_compo/<%= id_recette %>" method="post">
+                        <input name="recette" value="<%= id_recette %>" style="display: none"></br>
+                        Ingredient:
+                        <select name="ingr">
+                            <% ingredients_total.forEach(function(ingredient){ %>
+                            <option value="<%= ingredient.id %>"><%= ingredient.nom %></option>
+                            <% }); %>
+                        </select> </br>
+                        Quantite:
+                        <input type="text" name="quantite" value="10"></br>(grammes ou unités)</br>
+                        <input type="submit" value="ajouter"></br>
+                    </form>
+                    <% } %>
+                    </br></br>
+                    <p>L'ingredient n'existe pas encore?</p>
+                    <button onclick="affichage_creer_ingredient()">Alors créez le ici</button></br></br>
+                    <div class="creer_ingredient" style="display: none">
+                        <form class ="creer_ingredient" action="/creer_ingredient/<%= id_recette %>" method="post">
+                            Ingredient:
+                            <input type="text" name="nom" value=""></br>
+                            Energie: (pour 100g ou a l'unité)
+                            <input type="text" name="energie" value="0"> en kcalories</br>
+                            <input type="submit" value="ajouter"></br>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                </div>
+            </div>
+        </div>
+        <% }; %>
+    </body>
+</html>
